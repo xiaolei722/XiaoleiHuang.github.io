@@ -1,14 +1,8 @@
 # Xiaolei Huang
 Technical Summary:
 Databases: MS SQL Server 2000, 2005, Oracle, DB2, MS Access
-Languages: C#, C++, C, .Net, VB.NET, ASP.Net, SQL, HTML, XML,
-
-JavaScript, Java, Ajax
-
-Tools: .NET 1.1 and 2.0, Dream Weaver, FTP, NUNIT, COM+, MS
-
-SourceSafe
-
+Languages: C#, C++, C, .Net, VB.NET, ASP.Net, SQL, HTML, XML,JavaScript, Java, Ajax
+Tools: .NET 1.1 and 2.0, Dream Weaver, FTP, NUNIT, COM+, MS SourceSafe
 Systems: Windows XP/2000, Windows NT 4.0.
 Applications: Adobe Photoshop 7.0, Flash MX, MS Office
 
@@ -43,11 +37,11 @@ triggers using SQL
 end and Oracle database as a backend
  Designed and implemented relational database structure for various web
 applications
-
  Interacted with end users to gather system requirements
  Created interactive help files for existing systems to improve user
 understanding of various system functions
  Used XML to retrieve data from various sources such as RSS feeds
+
 Database Administrator
 Brooklyn College (Transcript Office) 9/2003-12/2004
  Wrote queries to produce complex reports from student information
@@ -58,6 +52,7 @@ ensure data integrity
 departments
  Attended monthly meetings and interfaced with users of the department
 systems
+
 Education
 M.A., Computer and Information Science
 City University of New York (Brooklyn College)
@@ -68,10 +63,10 @@ Training
 PostScript Language Training Lexmark Corporation New York, NY
 ADO.NET Training Metrotech Center Brooklyn, NY
 ASP.NET 2.0 Training Metrotech Center Brooklyn, NY
-Microsoft Visual Studio.NET training IT Solutions Xchange New York, NY
+Microsoft Visual Studio.NET training IT Solutions Xchange New York, NY 
+
 Certification
 Microsoft Certified Application Developers (MCAD)
-
  Developing and Implementing Web Applications with Microsoft
 Visual C# .NET and Microsoft Visual Studio .NET
  Developing XML Web Services and Server Components with
