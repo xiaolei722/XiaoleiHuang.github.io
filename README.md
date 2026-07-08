@@ -1,5 +1,15 @@
-#Xiaolei Huang [<a href="https://xiaolei722.github.io/XiaoleiHuang.github.io/resume.html">Resume</a>]
-Welcome! Thank you for visiting my site. Great to have you here.
+<div style="text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin-top: 50px; padding: 20px;">
+
+  <h1>Xiaolei Huang</h1>
+  
+  <p>[<a href="https://xiaolei722.github.io/XiaoleiHuang.github.io/resume.html">Resume</a>]</p>
+  
+  <p style="font-size: 1.2rem; color: #333; margin-top: 20px;">
+    Welcome! Thank you for visiting my site. Great to have you here.
+  </p>
+
+</div>
+
 <div style="max-width: 500px; margin: 40px auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border: 1px solid #e1e4e8; border-radius: 6px; background-color: #fafbfc;">
   
   <h3 style="margin-top: 0; color: #24292e;">Send Me Feedback</h3>
