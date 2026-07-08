@@ -1,4 +1,4 @@
-# Xiaolei Huang [<a href="https://xiaolei722.github.io/XiaoleiHuang.github.io/resume.html">Resume</a>]
+Xiaolei Huang [<a href="https://xiaolei722.github.io/XiaoleiHuang.github.io/resume.html">Resume</a>]
 Welcome! Thank you for visiting my site. Great to have you here.
 <div style="max-width: 500px; margin: 40px auto; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; border: 1px solid #e1e4e8; border-radius: 6px; background-color: #fafbfc;">
   
