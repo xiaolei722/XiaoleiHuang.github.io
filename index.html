@@ -116,14 +116,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: 15px 0;
+  margin-top: 35px;
+  margin-bottom: 20px; 
 }
 
 /* Creating the heart geometry natively */
 .css-heart {
   position: relative;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   background-color: #e74c3c; /* Elegant deep red */
   transform: rotate(-45deg);
   cursor: pointer;
@@ -134,20 +135,20 @@
 .css-heart::after {
   content: "";
   position: absolute;
-  width: 24px;
-  height: 24px;
+  width: 36px;
+  height: 36px;
   background-color: #e74c3c;
   border-radius: 50%;
 }
 
 .css-heart::before {
-  top: -12px;
+  top: -18px;
   left: 0;
 }
 
 .css-heart::after {
   top: 0;
-  left: 12px;
+  left: 18px;
 }
 
 /* Optional hover animation to make it pop */
