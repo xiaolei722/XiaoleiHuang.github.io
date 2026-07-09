@@ -15,6 +15,8 @@
   <h3 style="margin-top: 0; color: #24292e;">Send Me Feedback</h3>
   
   <form action="https://formspree.io/f/mykqarlr" method="POST">
+    <input type="hidden" name="_next" value="https://github.com/xiaolei722/XiaoleiHuang.github.io">
+    
     <!-- Email field so you know who wrote to you (Optional) -->
     <div style="margin-bottom: 15px;">
       <label for="email" style="display: block; margin-bottom: 6px; font-weight: 600; color: #24292e;">Your Email (Optional):</label>
