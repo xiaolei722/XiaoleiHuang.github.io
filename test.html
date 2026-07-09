@@ -1,1 +1,38 @@
-Hi, Here!
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Xiaolei Huang - Test</title>
+  <style>
+    /* Global Flexbox Layout, Sidebar, and Content Styles */
+    body { margin: 0; display: flex; min-height: 100vh; font-family: sans-serif; }
+    .sidebar { width: 300px; background-color: #24292e; color: white; padding: 40px 20px; text-align: center; }
+    .sidebar a { color: #58a6ff; text-decoration: none; font-weight: 600; }
+    .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; }
+    .resume-container { max-width: 800px; margin: 0 auto; }
+    .section-title { font-size: 1.3rem; margin-top: 30px; border-bottom: 1px solid #e1e4e8; }
+    .skills-grid { display: grid; grid-template-columns: 150px 1fr; gap: 10px; }
+    @media (max-width: 768px) { body { flex-direction: column; } .sidebar { width: auto; } }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <h1>Xiaolei Huang</h1>
+    <div class="nav-links"><a href="index.html">← Back Home</a></div>
+  </div>
+  <div class="main-content">
+    <div class="resume-container">
+      <h2>Resume</h2>
+      <p>Contact: xiao722@gmail.com | (347) 450-8081</p>
+      <div class="section-title">Technical Summary</div>
+      <div class="skills-grid">
+        <div class="skills-label">Languages:</div><div>C#, C++, .NET, SQL, HTML, JavaScript</div>
+      </div>
+      <div class="section-title">Experience</div>
+      <p><strong>Senior Project Leader</strong> - HRA \ MIS (2009–Present)</p>
+      <p><strong>Project Leader</strong> - HRA \ HASA (2006–2009)</p>
+    </div>
+  </div>
+</body>
+</html>
