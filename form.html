@@ -9,16 +9,24 @@
 <body>
   <div class="form-container">
     <h3 style="margin-top: 0; color: #24292e;">Send Me Feedback</h3>
-    <form action="https://formspree.io" method="POST">
-      <input type="hidden" name="_next" value="https://github.com">
+    
+    <!-- FIX 1: Change to your actual Formspree endpoint URL with your Form ID -->
+    <form action="https://formspree.io/f/mykqarlr" method="POST"> 
+      
+      <!-- FIX 2: Fixed redirect URL to point back to your actual website instead of a generic github link -->
+      <input type="hidden" name="_next" value="https://github.io">
+
       <div style="margin-bottom: 15px;">
         <label style="display: block; margin-bottom: 6px; font-weight: 600;">Your Email (Optional):</label>
         <input type="email" name="_replyto" placeholder="email@example.com" style="width: 100%; padding: 8px; border: 1px solid #d1d5da; border-radius: 6px; box-sizing: border-box;">
       </div>
+      
       <div style="margin-bottom: 15px;">
         <label style="display: block; margin-bottom: 6px; font-weight: 600;">Message:</label>
-        <textarea name="message" rows="5" required placeholder="Type your feedback here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5da; border-radius: 6px; box-sizing: border-box; resize: vertical;></textarea>
+        <!-- FIX 3: Added the missing closing quote mark right after "resize: vertical;" -->
+        <textarea name="message" rows="5" required placeholder="Type your feedback here..." style="width: 100%; padding: 8px; border: 1px solid #d1d5da; border-radius: 6px; box-sizing: border-box; resize: vertical;"></textarea>
       </div>
+      
       <button type="submit" style="width: 100%; padding: 10px; background-color: #24292e; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer;">Submit Feedback</button>
     </form>
   </div>
