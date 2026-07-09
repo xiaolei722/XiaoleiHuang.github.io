@@ -4,11 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Xiaolei Huang - Test</title>
+
   <style>
-    /* Global Flexbox Layout, Sidebar, and Content Styles */
-    body { margin: 0; display: flex; min-height: 100vh; font-family: sans-serif; }
-
-
+    /* Global Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      display: flex;
+      min-height: 100vh;
+    }
 
     /* Sidebar Layout */
     .sidebar {
@@ -45,12 +50,39 @@
       line-height: 1.5;
     }
 
-    
-    .main-content { flex: 1; padding: 40px 50px; overflow-y: auto; }
-    .resume-container { max-width: 800px; margin: 0 auto; }
-    .section-title { font-size: 1.3rem; margin-top: 30px; border-bottom: 1px solid #e1e4e8; }
-    .skills-grid { display: grid; grid-template-columns: 150px 1fr; gap: 10px; }
-    @media (max-width: 768px) { body { flex-direction: column; } .sidebar { width: auto; } }
+    /* Main Content Area Layout */
+    .main-content {
+      flex: 1;
+      background-color: #ffffff;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    /* Form Container */
+    .form-container {
+      width: 100%;
+      max-width: 500px;
+      padding: 20px;
+      border: 1px solid #e1e4e8;
+      border-radius: 6px;
+      background-color: #fafbfc;
+    }
+
+    /* Responsive Design for Mobile Screens */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+      .sidebar {
+        width: auto;
+        padding: 20px;
+      }
+      .main-content {
+        padding: 20px;
+      }
+    }
   </style>
 </head>
 <body>
