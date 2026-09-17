@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>每周记账存钱助手</title>
+    <style>
+        /* 本地纯原生 CSS，秒开不卡顿 */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        header { text-align: center; margin-bottom: 30px; }
+        h1 { color: #2563eb; margin-bottom: 5px; }
+        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 600px) { .grid { grid-template-columns: 1fr 2fr; } }
+        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; font-size: 14px; color: #666; margin-bottom: 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
+        button { w
+        idth: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #1d4ed8; }
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .stat-card { padding: 15px; border-radius: 10px; color: white; text-align: center; }
+        .stat-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .stat-green { background: linear-gradient(135deg, #10b981, #047857); }
+        .stat-label { font-size: 12px; text-transform: uppercase; opacity: 0.8; }
+        .stat-val { font-size: 24px; font-weight: bold; margin-top: 5px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
+        th { color: #666; font-size: 13px; }
+        .btn-del { background: none; color: #ef4444; border: none; cursor: pointer; font-weight: bold; padding: 0; }
+        .btn-del:hover { color: #b91c1c; }
+        /* 简易离线可视化柱状图 */
+        .bar-chart { display: flex; align-items: flex-end; height: 120px; gap: 8px; margin-top: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px; overflow-x: auto; }
+        .bar-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 35px; }
+        .bar { width: 100%; background: #3b82f6; border-radius: 4px 4px 0 0; transition: height 0.3s; min-height: 2px; }
+        .bar-label { font-size: 10px; color: #777; margin-top: 5px; text-align: center; white-space: nowrap; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>📈 周周存钱罐</h1>
+        <p style="color: #666; margin: 0;">记录每周一的储蓄，积少成多看得到</p>
+    </header>
+
+    <div class="grid">
+        <!-- 左侧表单 -->
+        <div class="card">
+            <h3 style="margin-top:0;">📥 添加新记录</h3>
+            <form id="savingsForm">
+                <div class="form-group">
+                    <label for="inputDate">选择周一日期</label>
+                    <input type="date" id="inputDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="inputAmount">存入金额 (\$)</label>
+                    <input type="number" id="inputAmount" min="0.01" step="0.01" placeholder="例如: 50" required>
+                </div>
+                <button type="submit">确认存入</button>
+            </form>
+        </div>
+
+        <!-- 右侧数据看板 -->
+        <div>
+            <div class="stats-grid">
+                <div class="stat-card stat-blue">
+                    <div class="stat-label">累计储蓄</div>
+                    <div id="totalSaved" class="stat-val">\$0.00</div>
+                </div>
+                <div class="stat-card stat-green">
+                    <div class="stat-label">周平均值</div>
+                    <div id="averageSaved" class="stat-val">\$0.00</div>
+                </div>
+            </div>
+
+            <!-- 离线趋势图 -->
+            <div class="card" style="margin-bottom: 20px;">
+                <h3 style="margin-top:0; font-size: 16px;">📊 储蓄增长趋势</h3>
+                <div class="bar-chart" id="chartContainer"></div>
+            </div>
+
+            <!-- 数据列表 -->
+            <div class="card">
+                <h3 style="margin-top:0; font-size: 16px;">📜 历史明细</h3>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>金额</th>
+                                <th style="text-align: right;">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let records = JSON.parse(localStorage.getItem('pure_weekly_savings')) || [];
+
+    // 初始化自动计算上一个周一的日期
+    window.addEventListener('DOMContentLoaded', () => {
+        const today = new Date();
+        const day = today.getDay();
+        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
+        const monday = new Date(today.setDate(diff));
+        document.getElementById('inputDate').value = monday.toISOString().split('T')[0];
+        updateUI();
+    });
+
+    // 提交数据
+    document.getElementById('savingsForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dateVal = document.getElementById('inputDate').value;
+        const amountVal = parseFloat(document.getElementById('inputAmount').value);
+
+        if (!dateVal || isNaN(amountVal)) return;
+
+        const existingIndex = records.findIndex(item => item.date === dateVal);
+        if (existingIndex > -1) {
+            records[existingIndex].amount = amountVal;
+        } else {
+            records.push({ date: dateVal, amount: amountVal });
+        }
+
+        records.sort((a, b) => new Date(a.date) - new Date(b.date));
+        localStorage.setItem('pure_weekly_savings', JSON.stringify(records));
+        document.getElementById('inputAmount').value = '';
+        updateUI();
+    });
+
+    // 删除数据
+    function deleteRecord(index) {
+        records.splice(index, 1);
+        localStorage.setItem('pure_weekly_savings', JSON.stringify(records));
+        updateUI();
+    }
+
+    // 刷新页面渲染
+    function updateUI() {
+        const tableBody = document.getElementById('logTableBody');
+        const chartContainer = document.getElementById('chartContainer');
+        tableBody.innerHTML = '';
+        chartContainer.innerHTML = '';
+
+        let total = 0;
+        let maxAmount = 0;
+
+        records.forEach((record, index) => {
+            total += record.amount;
+            if (record.amount > maxAmount) maxAmount = record.amount;
+
+            // 格式化日期显示为 MM-DD
+            const d = new Date(record.date + 'T00:00:00');
+            const dateStr = `${d.getMonth()+1}/${d.getDate()}`;
+
+            // 插入表格行
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td style="font-weight:500;">${record.date}</td>
+                <td style="color:#059669; font-weight:bold;">$${record.amount.toFixed(2)}</td>
+                <td style="text-align: right;"><button onclick="deleteRecord(${index})" class="btn-del">删除</button></td>
+            `;
+            tableBody.appendChild(row);
+
+            // 渲染原生柱状图
+            const barWrapper = document.createElement('div');
+            barWrapper.className = 'bar-wrapper';
+            const barHeight = maxAmount > 0 ? (record.amount / maxAmount) * 100 : 0;
+            barWrapper.innerHTML = `
+                <div class="bar" style="height: ${Math.max(barHeight, 5)}px;" title="金额: $${record.amount}"></div>
+                <div class="bar-label">${dateStr}</div>
+            `;
+            chartContainer.appendChild(barWrapper);
+        });
+
+        if(records.length === 0) {
+            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999; padding:20px;">暂无储蓄记录，开始记账吧！</td></tr>`;
+            chartContainer.innerHTML = `<div style="color:#999; width:100%; text-align:center; line-height:120px; font-size:13px;">暂无数据图表</div>`;
+        }
+
+        const average = records.length > 0 ? (total / records.length) : 0;
+        document.getElementById('totalSaved').innerText = `$${total.toFixed(2)}`;
+        document.getElementById('averageSaved').innerText = `$${average.toFixed(2)}`;
+    }
+</script>
+</body>
+</html>
