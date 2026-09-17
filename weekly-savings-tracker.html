@@ -1,194 +1,191 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>每周记账存钱助手</title>
+    <title>Cloud Savings Tracker</title>
     <style>
-        /* 本地纯原生 CSS，秒开不卡顿 */
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f6f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 800px; margin: 0 auto; }
-        header { text-align: center; margin-bottom: 30px; }
-        h1 { color: #2563eb; margin-bottom: 5px; }
-        .grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 600px) { .grid { grid-template-columns: 1fr 2fr; } }
-        .card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            max-width: 600px;
+            margin: 40px auto;
+            padding: 0 20px;
+            color: #333;
+        }
+        h1 { color: #24292e; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; font-size: 14px; color: #666; margin-bottom: 5px; font-weight: bold; }
-        input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; font-size: 16px; }
-        button { w
-        idth: 100%; padding: 12px; background: #2563eb; color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #1d4ed8; }
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-card { padding: 15px; border-radius: 10px; color: white; text-align: center; }
-        .stat-blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
-        .stat-green { background: linear-gradient(135deg, #10b981, #047857); }
-        .stat-label { font-size: 12px; text-transform: uppercase; opacity: 0.8; }
-        .stat-val { font-size: 24px; font-weight: bold; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #eee; }
-        th { color: #666; font-size: 13px; }
-        .btn-del { background: none; color: #ef4444; border: none; cursor: pointer; font-weight: bold; padding: 0; }
-        .btn-del:hover { color: #b91c1c; }
-        /* 简易离线可视化柱状图 */
-        .bar-chart { display: flex; align-items: flex-end; height: 120px; gap: 8px; margin-top: 15px; border-bottom: 2px solid #ddd; padding-bottom: 5px; overflow-x: auto; }
-        .bar-wrapper { display: flex; flex-direction: column; align-items: center; flex: 1; min-width: 35px; }
-        .bar { width: 100%; background: #3b82f6; border-radius: 4px 4px 0 0; transition: height 0.3s; min-height: 2px; }
-        .bar-label { font-size: 10px; color: #777; margin-top: 5px; text-align: center; white-space: nowrap; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input[type="date"], input[type="number"] {
+            width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px;
+        }
+        button {
+            background-color: #2ea44f; color: white; border: 1px solid rgba(27,31,35,.15);
+            padding: 8px 16px; font-size: 14px; font-weight: 500; border-radius: 6px; cursor: pointer;
+        }
+        button:hover { background-color: #2c974b; }
+        button:disabled { background-color: #94d3a2; cursor: not-allowed; }
+        table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
+        th { background-color: #f6f8fa; }
+        .positive { color: #2ea44f; font-weight: bold; }
+        .negative { color: #cf222e; font-weight: bold; }
+        .loading { color: #666; font-style: italic; margin-top: 10px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <header>
-        <h1>📈 周周存钱罐</h1>
-        <p style="color: #666; margin: 0;">记录每周一的储蓄，积少成多看得到</p>
-    </header>
-
-    <div class="grid">
-        <!-- 左侧表单 -->
-        <div class="card">
-            <h3 style="margin-top:0;">📥 添加新记录</h3>
-            <form id="savingsForm">
-                <div class="form-group">
-                    <label for="inputDate">选择周一日期</label>
-                    <input type="date" id="inputDate" required>
-                </div>
-                <div class="form-group">
-                    <label for="inputAmount">存入金额 (\$)</label>
-                    <input type="number" id="inputAmount" min="0.01" step="0.01" placeholder="例如: 50" required>
-                </div>
-                <button type="submit">确认存入</button>
-            </form>
+    <h1>💰 Cloud Savings Tracker (Synced)</h1>
+    
+    <form id="savingsForm">
+        <div class="form-group">
+            <label for="date">Monday Date:</label>
+            <input type="date" id="date" required>
         </div>
-
-        <!-- 右侧数据看板 -->
-        <div>
-            <div class="stats-grid">
-                <div class="stat-card stat-blue">
-                    <div class="stat-label">累计储蓄</div>
-                    <div id="totalSaved" class="stat-val">\$0.00</div>
-                </div>
-                <div class="stat-card stat-green">
-                    <div class="stat-label">周平均值</div>
-                    <div id="averageSaved" class="stat-val">\$0.00</div>
-                </div>
-            </div>
-
-            <!-- 离线趋势图 -->
-            <div class="card" style="margin-bottom: 20px;">
-                <h3 style="margin-top:0; font-size: 16px;">📊 储蓄增长趋势</h3>
-                <div class="bar-chart" id="chartContainer"></div>
-            </div>
-
-            <!-- 数据列表 -->
-            <div class="card">
-                <h3 style="margin-top:0; font-size: 16px;">📜 历史明细</h3>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>日期</th>
-                                <th>金额</th>
-                                <th style="text-align: right;">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody id="logTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
+        <div class="form-group">
+            <label for="amount">Total Savings Balance (\$):</label>
+            <input type="number" id="amount" step="0.01" required placeholder="e.g. 5000">
         </div>
-    </div>
-</div>
+        <button type="submit" id="submitBtn">Log to Cloud</button>
+        <span id="statusMessage" class="loading" style="display:none;">Saving...</span>
+    </form>
 
-<script>
-    let records = JSON.parse(localStorage.getItem('pure_weekly_savings')) || [];
+    <div id="loadingData" class="loading">Fetching data from Google Sheets...</div>
 
-    // 初始化自动计算上一个周一的日期
-    window.addEventListener('DOMContentLoaded', () => {
-        const today = new Date();
-        const day = today.getDay();
-        const diff = today.getDate() - day + (day === 0 ? -6 : 1);
-        const monday = new Date(today.setDate(diff));
-        document.getElementById('inputDate').value = monday.toISOString().split('T')[0];
-        updateUI();
-    });
+    <table id="trackerTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Total Savings</th>
+                <th>Weekly Change</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+    </table>
 
-    // 提交数据
-    document.getElementById('savingsForm').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const dateVal = document.getElementById('inputDate').value;
-        const amountVal = parseFloat(document.getElementById('inputAmount').value);
+    <script>
+        // ================= CONFIGURATION =================
+        const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/fmy1egbdam2h8'; // 填入你的 SheetDB API URL
+        const SPREADSHEET_ID = '1sg54mI7F77OUI6r5emf7Chey7KXZ93XNOQZTxo0hu4M';   // 填入你的 Google Spreadsheet ID
+        const SHEET_NAME = 'Sheet1';                    // 你的工作表名称
+        // =================================================
 
-        if (!dateVal || isNaN(amountVal)) return;
+        document.getElementById('date').valueAsDate = new Date();
+        const form = document.getElementById('savingsForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const tableBody = document.getElementById('tableBody');
+        const trackerTable = document.getElementById('trackerTable');
+        const loadingData = document.getElementById('loadingData');
 
-        const existingIndex = records.findIndex(item => item.date === dateVal);
-        if (existingIndex > -1) {
-            records[existingIndex].amount = amountVal;
-        } else {
-            records.push({ date: dateVal, amount: amountVal });
+        // 从 Google Sheets 读取数据 (使用公共可读的 JSON 格式加速)
+        async function fetchCloudData() {
+            try {
+                const url = `https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+                const response = await fetch(url);
+                const text = await response.text();
+                
+                // 解析谷歌特有的 JSON 包装
+                const jsonString = text.substring(text.indexOf('{'), text.lastIndexOf('}') + 1);
+                const data = JSON.parse(jsonString);
+                
+                const rows = data.table.rows;
+                let savingsLog = [];
+
+                // 提取数据
+                rows.forEach(row => {
+                    if(row.c[0] && row.c[1]) {
+                        savingsLog.push({
+                            date: row.c[0].f || row.c[0].v,
+                            amount: parseFloat(row.c[1].v)
+                        });
+                    }
+                });
+
+                updateTableUI(savingsLog);
+            } catch (error) {
+                console.error("Error loading data:", error);
+                loadingData.innerText = "Failed to load data. Check configuration.";
+            }
         }
 
-        records.sort((a, b) => new Date(a.date) - new Date(b.date));
-        localStorage.setItem('pure_weekly_savings', JSON.stringify(records));
-        document.getElementById('inputAmount').value = '';
-        updateUI();
-    });
+        // 渲染表格 UI
+        function updateTableUI(savingsLog) {
+            // 按日期正序排序计算差值
+            savingsLog.sort((a, b) => new Date(a.date) - new Date(b.date));
+            tableBody.innerHTML = '';
 
-    // 删除数据
-    function deleteRecord(index) {
-        records.splice(index, 1);
-        localStorage.setItem('pure_weekly_savings', JSON.stringify(records));
-        updateUI();
-    }
+            savingsLog.forEach((entry, index) => {
+                const row = document.createElement('tr');
+                let differenceText = '-';
+                let diffClass = '';
 
-    // 刷新页面渲染
-    function updateUI() {
-        const tableBody = document.getElementById('logTableBody');
-        const chartContainer = document.getElementById('chartContainer');
-        tableBody.innerHTML = '';
-        chartContainer.innerHTML = '';
+                if (index > 0) {
+                    const diff = entry.amount - savingsLog[index - 1].amount;
+                    if (diff > 0) {
+                        differenceText = `+$${diff.toFixed(2)}`;
+                        diffClass = 'positive';
+                    } else if (diff < 0) {
+                        differenceText = `-$${Math.abs(diff).toFixed(2)}`;
+                        diffClass = 'negative';
+                    } else {
+                        differenceText = `$0.00`;
+                    }
+                }
 
-        let total = 0;
-        let maxAmount = 0;
+                row.innerHTML = `
+                    <td>${entry.date}</td>
+                    <td>$${entry.amount.toFixed(2)}</td>
+                    <td class="${diffClass}">${differenceText}</td>
+                `;
+                tableBody.insertBefore(row, tableBody.firstChild); // 最新数据在最上方
+            });
 
-        records.forEach((record, index) => {
-            total += record.amount;
-            if (record.amount > maxAmount) maxAmount = record.amount;
+            loadingData.style.display = 'none';
+            trackerTable.style.display = 'table';
+        }
 
-            // 格式化日期显示为 MM-DD
-            const d = new Date(record.date + 'T00:00:00');
-            const dateStr = `${d.getMonth()+1}/${d.getDate()}`;
+        // 提交数据到 SheetDB
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const date = document.getElementById('date').value;
+            const amount = parseFloat(document.getElementById('amount').value);
 
-            // 插入表格行
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td style="font-weight:500;">${record.date}</td>
-                <td style="color:#059669; font-weight:bold;">$${record.amount.toFixed(2)}</td>
-                <td style="text-align: right;"><button onclick="deleteRecord(${index})" class="btn-del">删除</button></td>
-            `;
-            tableBody.appendChild(row);
+            submitBtn.disabled = true;
+            statusMessage.style.display = 'inline';
+            statusMessage.innerText = 'Saving...';
 
-            // 渲染原生柱状图
-            const barWrapper = document.createElement('div');
-            barWrapper.className = 'bar-wrapper';
-            const barHeight = maxAmount > 0 ? (record.amount / maxAmount) * 100 : 0;
-            barWrapper.innerHTML = `
-                <div class="bar" style="height: ${Math.max(barHeight, 5)}px;" title="金额: $${record.amount}"></div>
-                <div class="bar-label">${dateStr}</div>
-            `;
-            chartContainer.appendChild(barWrapper);
+            try {
+                const response = await fetch(SHEETDB_API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        data: [{ "Date": date, "Amount": amount }]
+                    })
+                });
+
+                if (response.ok) {
+                    statusMessage.innerText = 'Saved successfully!';
+                    document.getElementById('amount').value = '';
+                    // 重新拉取最新数据
+                    await fetchCloudData();
+                } else {
+                    statusMessage.innerText = 'Save failed. Try again.';
+                }
+            } catch (error) {
+                console.error("Error saving data:", error);
+                statusMessage.innerText = 'Network error.';
+            } finally {
+                submitBtn.disabled = false;
+                setTimeout(() => { statusMessage.style.display = 'none'; }, 3000);
+            }
         });
 
-        if(records.length === 0) {
-            tableBody.innerHTML = `<tr><td colspan="3" style="text-align:center; color:#999; padding:20px;">暂无储蓄记录，开始记账吧！</td></tr>`;
-            chartContainer.innerHTML = `<div style="color:#999; width:100%; text-align:center; line-height:120px; font-size:13px;">暂无数据图表</div>`;
-        }
-
-        const average = records.length > 0 ? (total / records.length) : 0;
-        document.getElementById('totalSaved').innerText = `$${total.toFixed(2)}`;
-        document.getElementById('averageSaved').innerText = `$${average.toFixed(2)}`;
-    }
-</script>
+        // 页面加载时自动获取数据
+        fetchCloudData();
+    </script>
 </body>
 </html>
