@@ -65,7 +65,7 @@
     <script>
         // ================= CONFIGURATION =================
         const SHEETDB_API_URL = 'https://sheetdb.io/api/v1/fmy1egbdam2h8'; // 填入你的 SheetDB API URL
-        const SPREADSHEET_ID = '1sg54mI7F77OUI6r5emf7Chey7KXZ93XNOQZTxo0hu4M';   // 填入你的 Google Spreadsheet ID
+        const SPREADSHEET_ID = 'https://docs.google.com/spreadsheets/d/1sg54mI7F77OUI6r5emf7Chey7KXZ93XNOQZTxo0hu4M/edit#gid=0';   // 填入你的 Google Spreadsheet ID
         const SHEET_NAME = 'Sheet1';                    // 你的工作表名称
         // =================================================
 
@@ -80,7 +80,7 @@
         // 从 Google Sheets 读取数据 (使用公共可读的 JSON 格式加速)
         async function fetchCloudData() {
             try {
-                const url = `https://google.com{SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
+                const url = `{SPREADSHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NAME}`;
                 const response = await fetch(url);
                 const text = await response.text();
                 
